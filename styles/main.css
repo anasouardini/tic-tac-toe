@@ -350,7 +350,7 @@ a:active,
 a:hover,
 a:visited {
   text-decoration: none;
-  color: #4d58f0;
+  color: rgb(40, 150, 68);
 }
 
 /*===========================================
@@ -363,21 +363,61 @@ header {
   justify-content: space-between;
   flex-wrap: wrap;
 }
+header .message {
+  width: 100vw;
+  height: 40px;
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+  text-align: center;
+}
 header .player {
   width: 130px;
 }
-header .player input, header .player select {
+header .player .shape-container {
+  display: flex;
+  justify-content: space-between;
+}
+header .player .shape-container > * {
+  display: inline;
+  width: 45%;
+  margin: 0;
+}
+header .player input[type=color] {
+  overflow: hidden;
+  padding: 0;
+  border: none;
+}
+header .player input,
+header .player select,
+header .player .shape-container {
+  height: 30px;
   width: 100%;
   margin-top: 10px;
 }
+header .player input,
+header .player select {
+  border: 2px solid rgb(40, 150, 68);
+  background: transparent;
+  border-radius: 5px;
+  padding: 2px 5px;
+}
 header .game-controls {
-  width: 110px;
+  width: 150px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
 }
 header .game-controls button {
+  cursor: pointer;
+  background: rgb(40, 150, 68);
+  border: none;
+  padding: 6px 0;
+  font-weight: bold;
+  font-size: 0.9rem;
+  border-radius: 5px;
+  color: #EEE;
+  letter-spacing: 1.5px;
   width: 100%;
 }
 header .game-controls button + button {
@@ -389,25 +429,32 @@ header .game-controls button + button {
   grid-template-columns: repeat(3, 100px);
   grid-template-rows: repeat(3, 100px);
   place-content: center;
+  --gbBorderClr: #DDD;
+}
+.gameboard > div {
+  background: rgba(150, 150, 150, 0.1);
+}
+.gameboard > div .block-back-to-normal {
+  transform: scale(1) !important;
 }
 .gameboard .block:nth-of-type(2) {
-  border-right: 1px solid #EEE;
-  border-left: 1px solid #EEE;
+  border-right: 1px solid var(--gbBorderClr);
+  border-left: 1px solid var(--gbBorderClr);
 }
 .gameboard .block:nth-of-type(5) {
-  border: 1px solid #EEE;
+  border: 1px solid var(--gbBorderClr);
 }
 .gameboard .block:nth-of-type(8) {
-  border-right: 1px solid #EEE;
-  border-left: 1px solid #EEE;
+  border-right: 1px solid var(--gbBorderClr);
+  border-left: 1px solid var(--gbBorderClr);
 }
 .gameboard .block:nth-of-type(4) {
-  border-top: 1px solid #EEE;
-  border-bottom: 1px solid #EEE;
+  border-top: 1px solid var(--gbBorderClr);
+  border-bottom: 1px solid var(--gbBorderClr);
 }
-.gameboard .block:nth-of-type(7) {
-  border-top: 1px solid #EEE;
-  border-bottom: 1px solid #EEE;
+.gameboard .block:nth-of-type(6) {
+  border-top: 1px solid var(--gbBorderClr);
+  border-bottom: 1px solid var(--gbBorderClr);
 }
 
 button {
