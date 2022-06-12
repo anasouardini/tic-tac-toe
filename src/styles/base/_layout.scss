@@ -1,0 +1,65 @@
+/*===========================================
+================ CHUNK: BASE/LAYOUT
+===========================================*/
+@use "../abstracts/" as vars;
+
+header{
+    min-width: 468px;
+    padding: 40px 5%;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    
+    .player{
+        width: 130px;
+
+        input, select{
+            width: 100%;
+            margin-top: 10px;
+        }
+    }
+
+    .game-controls{
+        width: 110px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        button{
+            width: 100%;
+        }
+        button + button{
+            margin-top: 10px;
+        }
+    }
+}
+
+
+.gameboard{
+    display: grid;
+    grid-template-columns: repeat(3, 100px);
+    grid-template-rows: repeat(3, 100px);
+    place-content: center;
+
+    .block:nth-of-type(2){
+        border-right: 1px solid #EEE;
+        border-left: 1px solid #EEE;
+    }
+    .block:nth-of-type(5){
+        border: 1px solid #EEE;
+    }
+    .block:nth-of-type(8){
+        border-right: 1px solid #EEE;
+        border-left: 1px solid #EEE;
+    }
+    .block:nth-of-type(4){
+        border-top: 1px solid #EEE;
+        border-bottom: 1px solid #EEE;
+    }
+    .block:nth-of-type(7){
+        border-top: 1px solid #EEE;
+        border-bottom: 1px solid #EEE;
+    }
+}
+
+

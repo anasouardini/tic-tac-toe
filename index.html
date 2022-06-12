@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+		<head>
+		    <meta charset="UTF-8">
+		    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+		    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+		    <title>Tic-Tac-Toe</title>
+		    <link rel="stylesheet" href="styles/main.css">
+		    <script src="scripts/tictactoe.js" defer></script>
+			<script src="scripts/script.js" defer></script>
+		</head>
+
+		<body>
+			
+			<header>
+				<div data-player="" class="player">
+					<div class="profile">
+						<div class="pic"></div>
+						<div class="info">
+							<p class="points">Score: <span data-score>0</span></p>
+						</div>
+					</div>
+					<div class="controls">
+						<input type="text" class="player-name" placeholder="Name">
+						<input type="color" class="player-color" placeholder="Color">
+						<select name="shape" class="player-shape">
+							<option value="x">X</option>
+							<option value="o">O</option>
+						</select>
+						<select name="type" class="player-type">
+							<option value="human">Human</option>
+							<option value="bot">Bot</option>
+						</select>
+					</div>
+				</div>
+				<div class="game-controls">
+					<button data-start>start</button>
+					<button data-restart>restart</button>
+					<button data-another>another round</button>
+				</div>
+				<div data-player="" class="player">
+					<div class="profile">
+						<div class="pic"></div>
+						<div class="info">
+							<p class="points">Score: <span>0</span></p>
+						</div>
+					</div>
+					<div class="controls">
+						<input type="text" class="player-name" placeholder="Name">
+						<input type="color" class="player-color" placeholder="Color">
+						<select name="shape" class="player-shape">
+							<option value="x">X</option>
+							<option value="o">O</option>
+						</select>
+						<select name="type" class="player-type">
+							<option value="human">Human</option>
+							<option value="bot">Bot</option>
+						</select>
+					</div>
+				</div>
+			</header>
+		    <div class="gameboard"></div>
+		</body>
+
+</html>
