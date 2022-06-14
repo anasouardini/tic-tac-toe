@@ -12,7 +12,6 @@ let TicTacToe = (()=>{
             }
         },
         drawShape : (p, shape, color)=>{
-            // console.log("drawing at :",p);
             const block_DOM = document.querySelector(`[data-block="${p}"]`);
             block_DOM.style.zIndex = "-1";
             
@@ -205,6 +204,8 @@ let TicTacToe = (()=>{
         
         if(player.name != whosTurn().name){return "badturn"}
         
+        if(p>9 || p<1 || Number.isNaN(p)){console.error(`you can't play ${p}`); return false;}
+
         if(_game.gameBoard.some(block=>block[0] == p)){return "duplicate";}
         
         return true;
@@ -213,7 +214,7 @@ let TicTacToe = (()=>{
     const _humanPlay = ()=>({
         play : function(p){
             // if(_gameBoard.length>8){console.log("the end");return false;}
-            if(!_isLegalPlay(this, p)){return false;}
+            if(_isLegalPlay(this, p) !== true){return false;}
             _game.gameBoard.push([p, this.shape]);
             _DOM.drawShape(p, this.shape, this.color);
             let tmpObj = _checkWin(_game.gameBoard, this);
@@ -224,25 +225,30 @@ let TicTacToe = (()=>{
     });
 
     //MiniMax
-    const bestPlay = (gameboard, player, evaluatedType, depth)=>{
+    const bestPlay = (gameboard, player, perspective, oponent, depth)=>{
         //0, 1, -1
         const scores = {
-            bot : {tie:0, true:1},
-            human : {tie:0, true:-1}
+            [perspective] : {tie:0, true:1},
+            [oponent] : {tie:0, true:-1}
         };
-        //TODO: SEPERATE SHOWWINING FUNCTION²
+
         let result = _checkWin(gameboard, player);
         // console.log("checkwin: ", result.won);
-        // console.log("checkwin-player: ", player.type);
+        // console.log("checkwin-player: ", player.name);
         if(result.won != false && result.won != "tie"){
-            // console.log("checkwin score: ", scores[player.type][result.won]);
-            return scores[player.type][result.won]
+            // console.log("checkwin score: ", scores[player.name][result.won]);
+            let cells = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+            gameboard.forEach(blocks=>cells.splice(cells.indexOf(blocks[0]), 1));
+            return scores[player.name][result.won]*(cells.length+1);
         }else{
             let pastPlayer = Object.values(_game.players.playersList)[Number(!player.index)];
             result = _checkWin(gameboard, pastPlayer);
             if(result.won != false){
-                // console.log("checkwin score: ", scores[pastPlayer.type][result.won]);
-                return scores[pastPlayer.type][result.won]
+                // console.log("checkwin score: ", scores[pastPlayer.name][result.won]);
+                let cells = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+                gameboard.forEach(blocks=>cells.splice(cells.indexOf(blocks[0]), 1));
+                // console.log(scores);
+                return scores[pastPlayer.name][result.won]*(cells.length+1);
             }
         }
         
@@ -255,14 +261,14 @@ let TicTacToe = (()=>{
             // console.log([...gameboard, [position, player.shape]]);
             // console.log("player: ");
             // console.log(player);
-            let score = bestPlay([...gameboard, [position, player.shape]], Object.values(_game.players.playersList)[Number(!player.index)], evaluatedType, depth);
+            let score = bestPlay([...gameboard, [position, player.shape]], Object.values(_game.players.playersList)[Number(!player.index)], perspective, oponent, depth);
             moves[position] = score;
             // console.log("score ",score);
         });
         
         if(gameboard == _game.gameBoard){
-            emptyCells
             // console.log("emptyCells",emptyCells);
+            // console.log("player: ", player);
             // console.log("gameboard",gameboard);
             // console.log("moves",moves);
             let position = Object.keys(moves).find(key=>(moves[key]==Math.max(...Object.values(moves))));
@@ -274,7 +280,7 @@ let TicTacToe = (()=>{
         // else{
             
         // }
-        if(player.type == evaluatedType){
+        if(player.name == perspective){
             // console.log("type", player.type);
             // console.log("(max): ", Math.max(...Object.values(moves)));
             // console.log("moves: ", ...Object.values(moves));
@@ -292,23 +298,24 @@ let TicTacToe = (()=>{
             0:()=>{
                 return Math.floor(Math.random()*9+1);
             },
-            1:(player)=>{
-                let best = bestPlay(_game.gameBoard, player, player.type);
+            1:(player, oponent)=>{
+                let best = bestPlay(_game.gameBoard, player, player.name, oponent.name);
                 // console.log(best);
                 return best;//no depth
             },
-            2:(player)=>{
-                return bestPlay(_game.gameBoard, player, player.type, true);//with depth
+            2:(player, oponent)=>{
+                return bestPlay(_game.gameBoard, player, player.name, oponent.name, true);//with depth
             }
         }
-
+        
         if(!_mods.hasOwnProperty(mod)){console.error("the specified bot mod doesn't exist!");}
-
+        
         const play = function(){
             // if(_gameBoard.length>8){console.log("the end");return false;}
-            let chosenPos = _mods[mod](this);
-            if(_isLegalPlay(this, chosenPos) == "end"){return false;}
+            let oponentPlayer = Object.values(_game.players.playersList)[Number(!this.index)];
+            let chosenPos = _mods[mod](this, oponentPlayer);
             while(_isLegalPlay(this, chosenPos) == "duplicate"){chosenPos =_mods[mod](this);}
+            if(_isLegalPlay(this, chosenPos) !== true){return false;}
             
             // console.log("random position: "+randomPos);
             _game.gameBoard.push([parseInt(chosenPos), this.shape]);
