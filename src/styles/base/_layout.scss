@@ -61,24 +61,35 @@ header{
         align-items: center;
         justify-content: center;
         
-        button{
+        
+        button,
+        input{
             cursor: pointer;
             background: vars.$main-clr;
             border: none;
+            border-radius: 5px;
             padding: 6px 0;
             font-weight: bold;
             font-size: .9rem;
-            border-radius: 5px;
             color: #EEE;
             letter-spacing: 1.5px;
             width: 100%;
-        }
-        button + button{
             margin-top: 10px;
+            text-align: center;
+        }
+        
+        span{
+            color: #999;
+            font-size: .8rem;
+        }
+
+        input{
+            color: #444;
+            border: 2px solid vars.$main-clr;
+            background: transparent;
         }
     }
 }
-
 
 .gameboard{
 

@@ -1,6 +1,6 @@
 let TicTacToe = (()=>{
     
-    _DOM = {
+    let _DOM = {
         gameBoardParent : document.querySelector(".gameboard"),
         drawGameBoard : ()=>{
             for(let x=0;x<9;){
@@ -12,6 +12,7 @@ let TicTacToe = (()=>{
             }
         },
         drawShape : (p, shape, color)=>{
+            // console.log("drawing at :",p);
             const block_DOM = document.querySelector(`[data-block="${p}"]`);
             block_DOM.style.zIndex = "-1";
             
@@ -68,7 +69,10 @@ let TicTacToe = (()=>{
             [3, 5, 7]
         ],
         status : 0,
-        gameBoard : [],
+        gameBoard : [
+                        // [1, "o"], [2, "x"], [3, "o"],
+                        // [4, "x"], [5, "x"], [6, "o"]
+                    ],
         players : {
             firstPlayer : "",
             playersList : {}
@@ -95,12 +99,13 @@ let TicTacToe = (()=>{
 
     const createPlayer = (name, shape, color, type)=>{
         //create players if there are no players
-        if(Object.keys(_game.players.playersList).length < 2){
+        const playersLength = Object.keys(_game.players.playersList).length;
+        if(playersLength < 2){
             if(type == "bot"){
-                const botPlayer = Object.assign(_player(name, shape, color, type), _botPlay(0));
+                const botPlayer = Object.assign(_player(name, shape, color, type, playersLength), _botPlay(1));
                 _addPlayer(botPlayer);
             }else{
-                const humanPlayer = Object.assign(_player(name, shape, color, type), _humanPlay());
+                const humanPlayer = Object.assign(_player(name, shape, color, type, playersLength), _humanPlay());
                 _addPlayer(humanPlayer);
             }
         }else{console.error("there are already two players, try reseting the game first");}
@@ -150,20 +155,25 @@ let TicTacToe = (()=>{
         _game.players.playersList[player.name] = player;
     }
 
-    const playBot = ()=>{
+    const playBot = (delay)=>{
         if(_game.status == 1 && _game.gameBoard.length <9){
             let currentPlayer = TicTacToe.whosTurn();
             if(Object.values(_game.players.playersList)[0].type == "bot" && Object.values(_game.players.playersList)[1].type == "bot"){
                 TicTacToe.play(currentPlayer.name);
-                playBot();
+                setTimeout(()=>playBot(delay), delay);
+                // console.log("after timeout");
+                // playBot();
                 return;
             }
 
             if(currentPlayer.type == "bot"){
                 // console.log("bot is playing");
-                TicTacToe.play(currentPlayer.name);
+                setTimeout(()=>TicTacToe.play(currentPlayer.name), delay);
             }
         }
+        // else{
+        //     console.info("the PlayBot didn't run because it's not the bot's turn!");
+        // }
     };
 
     const whosTurn = ()=>{
@@ -206,16 +216,89 @@ let TicTacToe = (()=>{
             if(!_isLegalPlay(this, p)){return false;}
             _game.gameBoard.push([p, this.shape]);
             _DOM.drawShape(p, this.shape, this.color);
-            _checkWin(this);
+            let tmpObj = _checkWin(_game.gameBoard, this);
+            if(tmpObj.won == true){_processWining(this, tmpObj.combo);}
+            else if(tmpObj.won == "tie"){_processWining();}
             return true;
         }
     });
 
+    //MiniMax
+    const bestPlay = (gameboard, player, evaluatedType, depth)=>{
+        //0, 1, -1
+        const scores = {
+            bot : {tie:0, true:1},
+            human : {tie:0, true:-1}
+        };
+        //TODO: SEPERATE SHOWWINING FUNCTION²
+        let result = _checkWin(gameboard, player);
+        // console.log("checkwin: ", result.won);
+        // console.log("checkwin-player: ", player.type);
+        if(result.won != false && result.won != "tie"){
+            // console.log("checkwin score: ", scores[player.type][result.won]);
+            return scores[player.type][result.won]
+        }else{
+            let pastPlayer = Object.values(_game.players.playersList)[Number(!player.index)];
+            result = _checkWin(gameboard, pastPlayer);
+            if(result.won != false){
+                // console.log("checkwin score: ", scores[pastPlayer.type][result.won]);
+                return scores[pastPlayer.type][result.won]
+            }
+        }
+        
+        let moves = {};
+        let emptyCells = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+        gameboard.forEach(blocks=>emptyCells.splice(emptyCells.indexOf(blocks[0]), 1));
+        emptyCells.forEach(position => {
+            // console.log("position: ", position);
+            // console.log("gameboard: ");
+            // console.log([...gameboard, [position, player.shape]]);
+            // console.log("player: ");
+            // console.log(player);
+            let score = bestPlay([...gameboard, [position, player.shape]], Object.values(_game.players.playersList)[Number(!player.index)], evaluatedType, depth);
+            moves[position] = score;
+            // console.log("score ",score);
+        });
+        
+        if(gameboard == _game.gameBoard){
+            emptyCells
+            // console.log("emptyCells",emptyCells);
+            // console.log("gameboard",gameboard);
+            // console.log("moves",moves);
+            let position = Object.keys(moves).find(key=>(moves[key]==Math.max(...Object.values(moves))));
+            // console.log("the best play is: ", position);
+            return position;
+        }
+
+        // if(depth){return Object.values(moves).reduce((t, move)=>(t += move), 0);}//sum the all the moves
+        // else{
+            
+        // }
+        if(player.type == evaluatedType){
+            // console.log("type", player.type);
+            // console.log("(max): ", Math.max(...Object.values(moves)));
+            // console.log("moves: ", ...Object.values(moves));
+            return Math.max(...Object.values(moves));
+        }
+        else{
+            // console.log("type", player.type);
+            // console.log("(min): ", Math.min(...Object.values(moves)));
+            return Math.min(...Object.values(moves));
+        }
+    }
+
     const _botPlay = (mod)=>{
         const _mods = {
             0:()=>{
-                let rand = Math.floor(Math.random()*9+1);
-                return rand;
+                return Math.floor(Math.random()*9+1);
+            },
+            1:(player)=>{
+                let best = bestPlay(_game.gameBoard, player, player.type);
+                // console.log(best);
+                return best;//no depth
+            },
+            2:(player)=>{
+                return bestPlay(_game.gameBoard, player, player.type, true);//with depth
             }
         }
 
@@ -223,25 +306,25 @@ let TicTacToe = (()=>{
 
         const play = function(){
             // if(_gameBoard.length>8){console.log("the end");return false;}
+            let chosenPos = _mods[mod](this);
+            if(_isLegalPlay(this, chosenPos) == "end"){return false;}
+            while(_isLegalPlay(this, chosenPos) == "duplicate"){chosenPos =_mods[mod](this);}
             
-            rand = _mods[mod]();
-            if(_isLegalPlay(this, rand) == "end"){return false;}
-            while(_isLegalPlay(this, rand) == "duplicate"){rand = _mods[mod]();}
-            
-            const randomPos = rand;
             // console.log("random position: "+randomPos);
-            _game.gameBoard.push([randomPos, this.shape]);
-            _DOM.drawShape(randomPos, this.shape, this.color);
+            _game.gameBoard.push([parseInt(chosenPos), this.shape]);
+            _DOM.drawShape(chosenPos, this.shape, this.color);
 
-            _checkWin(this);
+            let tmpObj = _checkWin(_game.gameBoard, this);
+            if(tmpObj.won == true){_processWining(this, tmpObj.combo);}
+            else if(tmpObj.won == "tie"){_processWining();}
 
             return true;
         }
         return {play};
     };
 
-    const _player = function(name, shape, color, type){
-        return {name, shape, color, type, points:0};
+    const _player = function(name, shape, color, type, index){
+        return {name, shape, color, type, points:0, index};
     };
 
     const resetGame = (removePlyrs, resetScore)=>{
@@ -294,27 +377,30 @@ let TicTacToe = (()=>{
         _DOM.showWining(combo, msg);
     }
 
-    const _checkWin = (player)=>{
+    const _checkWin = (gameboard, player)=>{
+
         let wininCombo = [];
-        let filteredGameBoard = _game.gameBoard.filter((shape)=>shape[1] == player.shape);
+        let filteredGameBoard = gameboard.filter((shape)=>shape[1] == player.shape);
         let won = _game.winingCombo.some(combo=>{
             if(combo.every(block=>(filteredGameBoard.find(gbBlok=>(gbBlok[0]==block))))){
                 wininCombo = combo;
                 return true;
             }
         })
-
+        // console.log("checkwin won:", won);
         if(won){
-            _processWining(player, wininCombo);
-            return won;
+            //* _processWining(player, wininCombo);//need to be seperated
+            return {won, combo:wininCombo};
         }
         
         //TODO: you know...
-        if(_game.gameBoard.length == 9){
-            _processWining();
-            _game.status = 0;//stop the game
+        if(gameboard.length == 9){
+            //* _processWining();//no args means TIE
+            //* _game.status = 0;//stop the game
+            return {won:"tie"};
         }
-        return won;
+
+        return {won};;
     };
     
     return {
@@ -327,3 +413,5 @@ let TicTacToe = (()=>{
     };
 
 })()
+
+export default TicTacToe;
