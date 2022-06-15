@@ -1,7 +1,7 @@
 const path = require('path');
 const htmlWebpackPlugin = require('html-webpack-plugin');
 
-//todo: postcss(autoprefixer), watchers
+//todo: postcss(autoprefixer)
 module.exports = {
     // mode : 'production',
     entry : {
@@ -19,7 +19,8 @@ module.exports = {
     module : {//loaders
         rules : [
             {
-                test : /\.(css|scss)$/i,
+                // test : /\.(css|scss)$/i,
+                test : /\.s?css$/i,
                 use : [
                     {loader:'style-loader', options:{}},
                     'css-loader',
