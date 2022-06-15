@@ -5,7 +5,6 @@ document.addEventListener("click", (e)=>{
     
     const player1Container = document.querySelectorAll(".player")[0];
     const player2Container = document.querySelectorAll(".player")[1];
-    
     const player1Name      = player1Container.querySelector(".player-name" ).value;
     const player2Name      = player2Container.querySelector(".player-name" ).value;
     const player1Shape     = player1Container.querySelector(".player-shape").value;
