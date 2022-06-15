@@ -3,9 +3,12 @@ const htmlWebpackPlugin = require('html-webpack-plugin');
 
 //todo: postcss(autoprefixer), watchers
 module.exports = {
-    mode : 'development',
+    // mode : 'production',
     entry : {
-        app : path.resolve(__dirname, 'src/scripts/index.js')
+        app : {
+            // dependOn : '',
+            import: path.resolve(__dirname, 'src/scripts/index.js')
+        }
     },
     output : {
         path : path.resolve(__dirname, 'dist/'),
@@ -13,12 +16,20 @@ module.exports = {
         clean : true
     },
     devtool : 'source-map',
-    module : {
+    module : {//loaders
         rules : [
             {
-                test : /\.scss$/,
-                use : ['style-loader', 'css-loader', 'sass-loader']
-            }
+                test : /\.(css|scss)$/i,
+                use : [
+                    {loader:'style-loader', options:{}},
+                    'css-loader',
+                    'sass-loader'
+                ]
+            },
+            {
+                test: /\.(png|svg|jpg|jpeg|gif)$/i,
+                type: 'asset/resource',    
+            }, 
         ]
     },
     plugins : [
@@ -36,7 +47,7 @@ module.exports = {
         hot : true,
         open : true,
         compress : false,
-        historyApiFallback : true,
+        // historyApiFallback : true,
         client: {
             reconnect: false,
             logging: 'error'

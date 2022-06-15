@@ -8,7 +8,10 @@ let TicTacToe = (()=>{
                 _DOM.gameBoardParent.appendChild(block_DOM);
                 block_DOM.setAttribute("data-block", ++x);
                 block_DOM.setAttribute("class", "block");
-                block_DOM.style.cssText = `cursor:not-allowed;display:flex;align-items:center;justify-content:center;font-size: 60px;text-align:center;`;
+                block_DOM.style.cssText = `cursor:not-allowed;
+                                        display:flex;align-items:center;
+                                        justify-content:center;font-size: 60px;
+                                        text-align:center;`;
             }
         },
         drawShape : (p, shape, color)=>{
@@ -89,8 +92,14 @@ let TicTacToe = (()=>{
             if(Object.keys(_game.players.playersList).length == 2){
                 _game.status = 1;
                 let rand = Math.floor(Math.random()*10)+1
-                if(rand > 5){_game.players.firstPlayer = Object.keys(_game.players.playersList)[0];console.log(`fistplayer: ${Object.keys(_game.players.playersList)[0]}`)}
-                else{_game.players.firstPlayer = Object.keys(_game.players.playersList)[1];console.log(`fistplayer: ${Object.keys(_game.players.playersList)[1]}`)}
+                if(rand > 5){
+                    _game.players.firstPlayer = Object.keys(_game.players.playersList)[0];
+                    console.log(`fistplayer: ${Object.keys(_game.players.playersList)[0]}`)
+                }
+                else{
+                    _game.players.firstPlayer = Object.keys(_game.players.playersList)[1];
+                    console.log(`fistplayer: ${Object.keys(_game.players.playersList)[1]}`)
+                }
             }else{console.error("you need to create players first!");return false;}
         }
 
@@ -157,7 +166,8 @@ let TicTacToe = (()=>{
     const playBot = (delay)=>{
         if(_game.status == 1 && _game.gameBoard.length <9){
             let currentPlayer = TicTacToe.whosTurn();
-            if(Object.values(_game.players.playersList)[0].type == "bot" && Object.values(_game.players.playersList)[1].type == "bot"){
+            if(Object.values(_game.players.playersList)[0].type == "bot" 
+            && Object.values(_game.players.playersList)[1].type == "bot"){
                 TicTacToe.play(currentPlayer.name);
                 setTimeout(()=>playBot(delay), delay);
                 // console.log("after timeout");
@@ -261,7 +271,13 @@ let TicTacToe = (()=>{
             // console.log([...gameboard, [position, player.shape]]);
             // console.log("player: ");
             // console.log(player);
-            let score = bestPlay([...gameboard, [position, player.shape]], Object.values(_game.players.playersList)[Number(!player.index)], perspective, oponent, depth);
+            let score = bestPlay(
+                    [...gameboard, [position, player.shape]],
+                    Object.values(_game.players.playersList)[Number(!player.index)],
+                    perspective,
+                    oponent,
+                    depth
+                );
             moves[position] = score;
             // console.log("score ",score);
         });
