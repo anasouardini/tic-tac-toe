@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+		<head>
+		    <meta charset="UTF-8">
+		    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+		    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title><%=htmlWebpackPlugin.options.title%></title>
+		</head>
+
+		<body>
+			
+			<header>
+				<div class="message"></div>
+				<div data-player="" class="player">
+					<div class="profile">
+						<div class="pic"></div>
+						<div class="info">
+							<p class="points">Score: <span data-score>0</span></p>
+						</div>
+					</div>
+					<div class="controls">
+						<input type="text" class="player-name" placeholder="Name" value="HumanName">
+						<div class="shape-container">
+							<input type="color" class="player-color" placeholder="Color" value="#009900">
+							<select name="shape" class="player-shape">
+								<option value="x">X</option>
+								<option value="o">O</option>
+							</select>
+						</div>
+						<select name="type" class="player-type">
+							<option value="human">Homan</option>
+							<option value="bot">Bot</option>
+						</select>
+					</div>
+				</div>
+				<div class="game-controls">
+					<label>Bot Delay <span>(ms)</span><input type="number" value="0" data-bot-delay></label>
+					<button data-start-restart>start / restart</button>
+					<button data-another>another round</button>
+				</div>
+				<div data-player="" class="player">
+					<div class="profile">
+						<div class="pic"></div>
+						<div class="info">
+							<p class="points">Score: <span data-score>0</span></p>
+						</div>
+					</div>
+					<div class="controls">
+						<input type="text" class="player-name" placeholder="Name" value="BotName">
+						<div class="shape-container">
+							<input type="color" class="player-color" placeholder="Color" value="#990000">
+							<select name="shape" class="player-shape">
+								<option value="o">O</option>
+								<option value="x">X</option>
+							</select>
+						</div>
+						<select name="type" class="player-type">
+							<option value="bot">Bot</option>
+							<option value="human">Human</option>
+						</select>
+					</div>
+				</div>
+			</header>
+		    <div class="gameboard"></div>
+		</body>
+
+</html>
